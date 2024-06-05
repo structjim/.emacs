@@ -6,7 +6,7 @@
 	   )
 ;;Update .emacs from web (Emacs restart or manual eval required after.)
 (defun uu () "Update .emacs file" (interactive)
-	   (browse-url-emacs "https://raw.githubusercontent.com/structjim/.emacs/main/.emacs")
+	   (browse-url-emacs "https://raw.githubusercontent.com/zyusouken/dotEmacs/main/.emacs")
 	   (write-file "~/.emacs")
 	   (kill-this-buffer)
 	   )
@@ -237,6 +237,54 @@
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;   EXPERIMENTAL   ;;
 ;;;;;;;;;;;;;;;;;;;;;;
+(defun spready () (interactive)
+	   ;;START
+	   (let ((spready_delimiter "^"))
+		 (goto-char (point-min))
+		 (while (not (eobp)) ;;Per record...
+		   (beginning-of-line)
+		   (delete-char 8)
+		   (end-of-line)
+		   ;;Truncate cost
+		   (search-backward " " nil t)
+		   (kill-line)
+		   ;;^ before Dates
+		   (search-backward " " nil t 2)
+		   (delete-char 3)
+		   (insert spready_delimiter)
+		   (search-backward " " nil t)
+		   (delete-char 1)
+		   (insert spready_delimiter)
+		   ;;^ before TRAINING
+		   (search-backward " " nil t)
+		   (delete-char 1)
+		   (insert spready_delimiter)
+		   ;;^ after name
+		   (search-backward "@" nil t)
+		   (search-backward " " nil t)
+		   (delete-char 1)
+		   (insert spready_delimiter)
+		   ;;^ after email
+		   (search-forward " " nil t)
+		   (delete-backward-char 1)
+		   (insert spready_delimiter)
+		   ;;Delete comma and space separating LAST, FIRSTMIDDLE
+		   (beginning-of-line)
+		   (search-forward "," nil t)
+		   (backward-char 1)
+		   (delete-char 2)
+		   ;;Cut last name
+		   (push-mark (point) t nil)
+		   (beginning-of-line)
+		   (kill-region (point) (mark))
+		   ;;Move last name after FIRSTMIDDLE
+		   (search-forward "^" nil t)
+		   (backward-char 1)
+		   (insert " ")
+		   (yank)
+		   ;;Done with this record.
+		   (forward-line)
+		   )))
 (defun jim-vim (input)
 	"Handle Vim-like up/down jumps with just an int."
 	(interactive "sEnter Vim movement: ")
