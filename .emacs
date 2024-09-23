@@ -44,6 +44,7 @@
 (keyboard-translate ?\C-p ?\C-c)
 ;;[EDITING]
 (global-set-key (kbd "<backspace>") 'my-delete-indentation)
+(global-set-key (kbd "C-w") 'windows-revert)
 (global-set-key (kbd "C-o") 'kill-region) ;;CUT, TRANSLATED TO C-x
 (global-set-key (kbd "C-p") 'kill-ring-save) ;;COPY, TRANSLATED C-c
 (global-set-key (kbd "C-v") 'clipboard-yank)
@@ -326,6 +327,15 @@
 				)
 			)
 	)
+)
+(defun windows-revert ()
+	"Revert to a single window setup by deleting all other windows,
+	then split the window horizontally."
+	(interactive)
+	;; First, delete all other windows except the current one
+	(delete-other-windows)
+	;; Then, split the current window horizontally
+	(split-window-horizontally)
 )
 
 ;;[FROM CASEY]
