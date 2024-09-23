@@ -329,12 +329,9 @@
 	)
 )
 (defun windows-revert ()
-	"Revert to a single window setup by deleting all other windows,
-	then split the window horizontally."
+	"Revert view to two windows, split horizontally."
 	(interactive)
-	;; First, delete all other windows except the current one
 	(delete-other-windows)
-	;; Then, split the current window horizontally
 	(split-window-horizontally)
 )
 
