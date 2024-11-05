@@ -241,7 +241,21 @@
 (defun spready () (interactive)
 	   ;;START
 	   (let ((spready_delimiter "^"))
+		 ;;Kill stuff before table
+		 (beginning-of-buffer)
+		 (push-mark (point) t nil)
+		 (search-forward "Course Dates Amount" nil t)
+		 (next-line)
+		 (beginning-of-line)
+		 (kill-region (point)(mark))
+		 ;;Kill stuff after table
+		 (end-of-buffer)
+		 (push-mark (point) t nil)
+		 (previous-line)
+		 (end-of-line)
+		 (kill-region (point)(mark))
 		 (goto-char (point-min))
+		 (beginning-of-buffer)
 		 (while (not (eobp)) ;;Per record...
 		   (beginning-of-line)
 		   (delete-char 8)
@@ -279,7 +293,7 @@
 		   (beginning-of-line)
 		   (kill-region (point) (mark))
 		   ;;Move last name after FIRSTMIDDLE
-		   (search-forward "^" nil t)
+		   (search-forward spready_delimiter nil t)
 		   (backward-char 1)
 		   (insert " ")
 		   (yank)
