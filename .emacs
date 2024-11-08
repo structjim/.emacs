@@ -235,6 +235,7 @@
 	(delete-other-windows)
 	(split-window-horizontally)
 )
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;;   EXPERIMENTAL   ;;
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -243,63 +244,101 @@
 	   (let ((spready_delimiter "^"))
 		 ;;Kill stuff before table
 		 (beginning-of-buffer)
-		 (push-mark (point) t nil)
+		 (set-mark (point))
 		 (search-forward "Course Dates Amount" nil t)
 		 (next-line)
 		 (beginning-of-line)
 		 (kill-region (point)(mark))
 		 ;;Kill stuff after table
 		 (end-of-buffer)
-		 (push-mark (point) t nil)
-		 (previous-line)
-		 (end-of-line)
+		 (set-mark (point))
+		 (search-backward "Total" nil t)
+		 (backward-char 1)
 		 (kill-region (point)(mark))
-		 (goto-char (point-min))
+		 (deactivate-mark)
 		 (beginning-of-buffer)
 		 (while (not (eobp)) ;;Per record...
-		   (beginning-of-line)
-		   (delete-char 8)
-		   (end-of-line)
-		   ;;Truncate cost
-		   (search-backward " " nil t)
-		   (kill-line)
-		   ;;^ before Dates
-		   (search-backward " " nil t 2)
-		   (delete-char 3)
-		   (insert spready_delimiter)
-		   (search-backward " " nil t)
-		   (delete-char 1)
-		   (insert spready_delimiter)
-		   ;;^ before TRAINING
-		   (search-backward " " nil t)
-		   (delete-char 1)
-		   (insert spready_delimiter)
-		   ;;^ after name
-		   (search-backward "@" nil t)
-		   (search-backward " " nil t)
-		   (delete-char 1)
-		   (insert spready_delimiter)
-		   ;;^ after email
-		   (search-forward " " nil t)
-		   (delete-backward-char 1)
-		   (insert spready_delimiter)
-		   ;;Delete comma and space separating LAST, FIRSTMIDDLE
-		   (beginning-of-line)
-		   (search-forward "," nil t)
-		   (backward-char 1)
-		   (delete-char 2)
-		   ;;Cut last name
-		   (push-mark (point) t nil)
-		   (beginning-of-line)
-		   (kill-region (point) (mark))
-		   ;;Move last name after FIRSTMIDDLE
-		   (search-forward spready_delimiter nil t)
-		   (backward-char 1)
-		   (insert " ")
-		   (yank)
-		   ;;Done with this record.
-		   (forward-line)
-		   )))
+		 (delete-char 8)
+		 (end-of-line)
+		 ;;Truncate cost
+		 (search-backward " " nil t)
+		 (kill-line)
+		 ;;delimiter before each of the 2 date
+		 (search-backward " " nil t 2)
+		 (delete-char 3)
+		 (insert spready_delimiter)
+		 (search-backward " " nil t)
+		 (delete-char 1)
+		 (insert spready_delimiter)
+		 ;;delimiter before TRAINING
+		 (search-backward " " nil t)
+		 (delete-char 1)
+		 (insert spready_delimiter)
+		 ;;delimiter after name
+		 (search-backward "@" nil t)
+		 (search-backward " " nil t)
+		 (delete-char 1)
+		 (insert spready_delimiter)
+		 ;;delimiter after email
+		 (search-forward " " nil t)
+		 (delete-backward-char 1)
+		 (insert spready_delimiter)
+		 ;;Delete comma and space separating LAST, FIRSTMIDDLE
+		 (beginning-of-line)
+		 (search-forward "," nil t)
+		 (backward-char 1)
+		 (delete-char 2)
+		 ;;Cut last name
+		 (set-mark (point))
+		 (beginning-of-line)
+		 (kill-region (point) (mark))
+		 (deactivate-mark)	
+		 ;;Move last name after FIRSTMIDDLE
+		 (search-forward spready_delimiter nil t)
+		 (backward-char 1)
+		 (insert " ")
+		 (yank)
+		 ;;Done with this record.
+		 (forward-line)
+		 ))
+		 (beginning-of-buffer))
+
+(defun maily () (interactive)
+	   ;;START
+	   (let ((maily_delimiter "^"))
+		 ;;Delete before firstname
+		 (end-of-buffer)
+		 (newline)
+		 (push-mark)
+		 (yank)
+		 (pop-global-mark)
+		 (search-forward "firstname - " nil t)
+		 (kill-region (point) (mark))
+		 ;;Delete between names, leavea a space
+		 (end-of-line)
+		 (set-mark (point))
+		 (search-forward "lastname -" nil t)
+		 (kill-region (point) (mark))
+		 ;;Delimiter after names
+		 (end-of-line)
+		 (insert maily_delimiter)
+		 ;;Delete stuff between names delimiter and mail
+		 (set-mark (point))
+		 (search-forward "emailaddress - " nil t)
+		 (kill-region (point) (mark))
+		 ;;Delimiter after mail
+		 (end-of-line)
+		 (insert maily_delimiter)
+		 ;;Delete stuff between mail and phone
+		 (set-mark (point))
+		 (search-forward "phonenumber - " nil t)
+		 (kill-region (point) (mark))
+		 ;;Delete the rest
+		 (end-of-line)
+		 (set-mark (point))
+		 (end-of-buffer)
+		 (kill-region (point) (mark))))
+
 (defun jim-vim (input)
 	"Handle Vim-like up/down jumps with just an int."
 	(interactive "sEnter Vim movement: ")
@@ -310,6 +349,7 @@
 		(t (message "Invalid movement: %s (enter a signed int)" input)))
 	)
 )
+
 (defun jim-vim-jk (input)
 	"Handle Vim-like Nj and Nk movements based on the input."
 	(interactive "sEnter Vim movement: ")
